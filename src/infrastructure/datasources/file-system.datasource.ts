@@ -1,18 +1,26 @@
 import fs from 'fs';
 import { LogDatasource } from "../../domain/datasources/log.datasource";
-import { LogEntity } from "../../domain/entities/log.entity";
+import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity";
 
 export class FileSystemDatasource implements LogDatasource {
 
   private readonly logPath = 'logs/'
-  private readonly allLogsPath = `${this.logPath}/logs-low.log`
+  private readonly allLogsPath = `${this.logPath}/logs-all.log`
   private readonly mediumLogsPath = `${this.logPath}/logs-low.log`
   private readonly highLogsPath = `${this.logPath}/logs-low.log`
+
+  #getLogsFromFile = (path: string): LogEntity[] => {
+    const content = fs.readFileSync(path, 'utf-8')
+    const logs = content.split('\n').map(LogEntity.fromJson)
+
+    return logs
+  }
 
   constructor() {
     this.createLogsFiles()
   }
 
+  // Crea los directorios y archivos necesarios para almacenar los logs
   createLogsFiles() {
     if (!fs.existsSync(this.logPath)) { fs.mkdirSync(this.logPath) }
 
@@ -28,10 +36,37 @@ export class FileSystemDatasource implements LogDatasource {
 
   }
 
-  saveLog(log: LogEntity): Promise<void> {
-    throw new Error("Method not implemented.");
+  async saveLog(log: LogEntity): Promise<void> {
+    const logAsJson = `${JSON.stringify(log)}\n`
+
+    fs.appendFileSync(this.allLogsPath, logAsJson)
+
+    let fileToSave = ''
+    switch (log.level) {
+      case LogSeverityLevel.low: break
+      case LogSeverityLevel.medium:
+        fileToSave = this.mediumLogsPath
+        break
+      case LogSeverityLevel.high:
+        fileToSave = this.highLogsPath
+        break
+    }
+
+    fs.appendFileSync(fileToSave, logAsJson)
   }
-  getLogs(): Promise<LogEntity[]> {
-    throw new Error("Method not implemented.");
+
+
+  async getLogs(severityLevel: LogSeverityLevel): Promise<LogEntity[]> {
+    switch (severityLevel) {
+      case LogSeverityLevel.low: {
+        return this.#getLogsFromFile(this.allLogsPath)
+      }
+      case LogSeverityLevel.medium: {
+        return this.#getLogsFromFile(this.mediumLogsPath)
+      }
+      case LogSeverityLevel.high: {
+        return this.#getLogsFromFile(this.highLogsPath)
+      }
+    }
   }
 }
