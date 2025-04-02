@@ -1,13 +1,13 @@
 import fs from 'fs';
-import { LogDatasource } from "../../domain/datasources/log.datasource";
-import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity";
+import { LogDatasource } from "../../domain/datasources/log.datasource.js";
+import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity.js";
 
 export class FileSystemDatasource implements LogDatasource {
 
   private readonly logPath = 'logs/'
   private readonly allLogsPath = `${this.logPath}/logs-all.log`
-  private readonly mediumLogsPath = `${this.logPath}/logs-low.log`
-  private readonly highLogsPath = `${this.logPath}/logs-low.log`
+  private readonly mediumLogsPath = `${this.logPath}/logs-medium.log`
+  private readonly highLogsPath = `${this.logPath}/logs-high.log`
 
   #getLogsFromFile = (path: string): LogEntity[] => {
     const content = fs.readFileSync(path, 'utf-8')
@@ -43,7 +43,7 @@ export class FileSystemDatasource implements LogDatasource {
 
     let fileToSave = ''
     switch (log.level) {
-      case LogSeverityLevel.low: break
+      case LogSeverityLevel.low: return
       case LogSeverityLevel.medium:
         fileToSave = this.mediumLogsPath
         break

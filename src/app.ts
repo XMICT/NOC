@@ -1,4 +1,4 @@
-import { ServerApp } from "./presentation/server-app";
+import { ServerApp } from "./presentation/server-app.js"
 
 function main() {
   ServerApp.start()
