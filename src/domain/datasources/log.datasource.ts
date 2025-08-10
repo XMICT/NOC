@@ -1,6 +1,6 @@
-import { LogEntity, LogSeverityLevel } from '../entities/log.entity.js';
+import { LogEntity, LogSeverityLevel } from '../entities/log.entity.ts';
 
 export abstract class LogDatasource {
   abstract saveLog(log: LogEntity): Promise<void>
-  abstract getLogs(seveityLevel: LogSeverityLevel): Promise<LogEntity[]>
+  abstract getLogs(severityLevel: LogSeverityLevel): Promise<LogEntity[]>
 }

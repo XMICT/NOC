@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { LogDatasource } from "../../domain/datasources/log.datasource.js";
-import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity.js";
+import { LogDatasource } from "../../domain/datasources/log.datasource.ts";
+import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity.ts";
 
 export class FileSystemDatasource implements LogDatasource {
 
@@ -66,6 +66,9 @@ export class FileSystemDatasource implements LogDatasource {
       }
       case LogSeverityLevel.high: {
         return this.#getLogsFromFile(this.highLogsPath)
+      }
+      default: {
+        return this.#getLogsFromFile(this.allLogsPath)
       }
     }
   }

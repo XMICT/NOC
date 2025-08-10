@@ -1,34 +1,42 @@
-import { CheckService } from "../domain/use-cases/check-service.js"
-import { FileSystemDatasource } from "../infrastructure/datasources/file-system.datasource.js"
-import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository.impl.js"
-import { CronService } from "./cron/cron-service.js"
+import { LogSeverityLevel } from "../domain/entities/log.entity.ts"
+import { FileSystemDatasource } from "../infrastructure/datasources/file-system.datasource.ts"
+import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository.impl.ts"
+import { EmailService } from "./email/email.service.ts"
 
-const fileSystemRepository = new LogRepositoryImpl(
+const logRepository = new LogRepositoryImpl(
   new FileSystemDatasource()
+  // new MongoDatasource
 )
+
+const sendEmailService = new EmailService()
 
 export class ServerApp {
 
-  static start() {
+  static async start() {
     console.log('Server started...')
 
-    const url = 'http://localhost:3000'
+    // Servicio de correos
     //const url = 'https://google.com'
-    CronService.createJob(
-      '*/2 * * * * *',
-      () => {
+    // new SendEmailLog(
+    //   // Dependency Injection
+    //   sendEmailService,
+    //   fileSystemRepository
+    // ).execute(['guardiola.cev@gmail.com', 'carlosguardiola2001@gmail.com'])
 
-        new CheckService(
-          fileSystemRepository,
-          () => { console.log(`${url} is works `) },
-          (error) => { console.log(error) }
-        ).execute(url)
-        //new CheckService().execute('https://google.com')
-      }
-    )
-  }
+    // const url = 'https://google.com'
+    // CronService.createJob(
+    //   '*/2 * * * * *',
+    //   () => {
 
-  constructor(/** Dependency injection */) {
+    //     new CheckService(
+    //       logRepository,
+    //       () => { console.log(`${url} is works `) },
+    //       (error) => { console.log(error) }
+    //     ).execute(url)
+    //     //new CheckService().execute('https://google.com')
+    //   }
+    // )
 
+    const logs = logRepository.getLogs(LogSeverityLevel.high)
   }
 }

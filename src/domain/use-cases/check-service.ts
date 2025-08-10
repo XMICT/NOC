@@ -1,5 +1,5 @@
-import { LogEntity, LogSeverityLevel } from "../entities/log.entity.js"
-import { LogRepository } from "../repository/log.repository.js"
+import { LogEntity, LogSeverityLevel } from "../entities/log.entity.ts"
+import { LogRepository } from "../repository/log.repository.ts"
 
 interface CheckServiceUseCase {
   execute: (url: string) => Promise<boolean>
@@ -26,14 +26,24 @@ export class CheckService implements CheckServiceUseCase {
 
       if (!respone.ok) throw new Error(`${url} url is not available`)
 
-      const log = new LogEntity(LogSeverityLevel.low, `Service with url ${url} is working`)
+      const log = new LogEntity({
+        level: LogSeverityLevel.low,
+        message: `Service with url ${url} is working`,
+        origin: 'check-service.ts',
+        createdAt: new Date()
+      })
+
       this.logRepository.saveLog(log)
 
       this.succesCallback()
       return true
 
     } catch (error) {
-      const log = new LogEntity(LogSeverityLevel.high, `${error}`)
+      const log = new LogEntity({
+        level: LogSeverityLevel.high, 
+        message: `${error}`,
+        origin: 'check-service.ts'
+      })
       this.logRepository.saveLog(log)
 
       this.errorCallback(`${error}`)

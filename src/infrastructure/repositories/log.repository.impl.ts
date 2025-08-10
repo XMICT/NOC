@@ -1,6 +1,6 @@
-import { LogDatasource } from '../../domain/datasources/log.datasource.js';
-import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity.js";
-import { LogRepository } from "../../domain/repository/log.repository.js";
+import { LogDatasource } from '../../domain/datasources/log.datasource.ts';
+import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity.ts";
+import { LogRepository } from "../../domain/repository/log.repository.ts";
 
 export class LogRepositoryImpl implements LogRepository {
 
@@ -9,7 +9,7 @@ export class LogRepositoryImpl implements LogRepository {
   //   this.logDatasource = logDataSource
   // }
 
-  // Instancia la variable
+  // Hace lo mismo que arriba
   constructor(private readonly logDatasource: LogDatasource) { }
 
   async saveLog(log: LogEntity): Promise<void> {
